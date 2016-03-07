@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, comment = "#>")
 ```
 
 # Overview 
@@ -44,12 +44,12 @@ library(stringr)
 bgh_url <- 'http://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE43163&format=file&file=GSE43163_CompleteCountTable_Bgh.txt.gz'
 
 # 2 info and blank lines at top, skip them
-raw_tab_bgh <- read_tsv(bgh_url, skip = 2)
+raw_data <- read_tsv(bgh_url, skip = 2)
 
 # the header for the first column is "NA", set it manually
-names(raw_tab_bgh)[1] <- 'gene.name'
+names(raw_data)[1] <- 'gene.name'
 
-head(raw_tab_bgh)
+raw_data
 ```
 
 # Problems
@@ -61,10 +61,26 @@ Now that the raw data are loaded, your first task is to tidy the data with `tidy
 ```{r problem_1}
 # add tidying code here
 cleaned_data <- raw_data %>% tbl_df
+
 cleaned_data
 ```
 
 ## Problem 2
+
+Identify the top 3 most consistently differentially expressed genes between the earliest and latest time points for each combination of `plant` and `virus`.
+
+- Differential expression is the difference between `counts`
+- "Consistency" is the smallest variance in counts between replicates
+
+### Strategy
+
+1. Create a new table from the cleaned data by moving each `hpi` value to a new column name, with counts for each in the column (hint: use a `tidyr` verb).
+
+2. Create a new column containing the expression difference between the relevant time points.
+
+3. Calculate summary statistics (mean and variance) of the expression differences by grouping (hint) the `gene.name`, `plant`, and `virus` columns.
+
+4. Sort by these statistics and use the `dplyr` verb `slice` to pull the ones you want (i.e., the top 3).
 
 ```{r problem_2}
 ```
