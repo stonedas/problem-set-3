@@ -1,0 +1,85 @@
+---
+title: "Problem Set 3"
+author: "Jay Hesselberth"
+date: "February 20, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Overview 
+
+We will examine a [time-course of mRNA expression][1] of barley powdery mildew fungus in immunocompromised plants (*Arabidopsis*). The fungus Blumeria graminis f. sp. hordei (called *Bgh* from now on)
+
+Counts were generated using the [`maSigPro` software][3] and deposited in [NCBI GEO][2].
+
+[1]: http://www.ncbi.nlm.nih.gov/pubmed/23175786
+[2]: http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE43163  
+[3]: http://bioinformatics.oxfordjournals.org/content/30/18/2598.full
+
+Some important identifiers for the data set:
+
+| Name | Description |
+| ---- | ----------- |
+| `A6` | *Bgh* isolate expressing other AVRA effectors |
+| `K1` | *Bgh* isolate expressing the cognate AVRA1 effector for MLA1|
+| `pps` | *Arabidopsis* plants |
+| `B12` | *Arabidopsis* plants expressing MLA1-HA|
+
+We will download tables from GEO containing counts of mRNA abundance from both the fungal sample.
+
+# Raw data
+
+First we need load the data.
+
+```{r load_raw_data, message = FALSE}
+library(readr)
+library(tidyr)
+library(dplyr)
+library(stringr)
+
+# bgh data
+bgh_url <- 'http://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE43163&format=file&file=GSE43163_CompleteCountTable_Bgh.txt.gz'
+
+# 2 info and blank lines at top, skip them
+raw_tab_bgh <- read_tsv(bgh_url, skip = 2)
+
+# the header for the first column is "NA", set it manually
+names(raw_tab_bgh)[1] <- 'gene.name'
+
+head(raw_tab_bgh)
+```
+
+# Problems
+
+## Problem 1
+
+Now that the raw data are loaded, your first task is to tidy the data with `tidyr`.
+
+```{r problem_1}
+# add tidying code here
+cleaned_data <- raw_data %>% tbl_df
+cleaned_data
+```
+
+## Problem 2
+
+```{r problem_2}
+```
+
+## Problem 3
+
+```{r problem_3}
+```
+
+## Problem 4
+
+```{r problem_4}
+```
+
+## Problem 5
+
+```{r problem_5}
+```
