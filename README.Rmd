@@ -1,7 +1,7 @@
 ---
-title: "Problem Set 3"
+title: "Problem Set 3. Due Friday March 11 5pm"
 author: "Jay Hesselberth"
-date: "February 20, 2016"
+date: "March 7, 2016"
 output: html_document
 ---
 
@@ -67,7 +67,7 @@ cleaned_data
 
 ## Problem 2
 
-Identify the top 3 most consistently differentially expressed genes between the earliest and latest time points for each combination of `plant` and `virus`.
+Identify the top 3 most consistently differentially expressed genes between the earliest and latest time points for each combination of `plant` and `Bgh` strains.
 
 - Differential expression is the difference between `counts`
 - "Consistency" is the smallest variance in counts between replicates
@@ -80,22 +80,25 @@ Identify the top 3 most consistently differentially expressed genes between the 
 
 3. Calculate summary statistics (mean and variance) of the expression differences by grouping (hint) the `gene.name`, `plant`, and `virus` columns.
 
-4. Sort by these statistics and use the `dplyr` verb `slice` to pull the ones you want (i.e., the top 3).
+4. Sort by these statistics and use the `dplyr` verb `slice` to pull the ones you want (i.e., the top 3). Note you will have to remove `gene.name` from the grouping so that sorting works.
 
 ```{r problem_2}
 ```
 
 ## Problem 3
 
+Plot the expression (`count`) by time (`hpi`) for the above genes. Format the plot as follows:
+
+1. Plot each point.
+1. Connect the points with a smooth line 
+1. Create a facet for each plant / bgh pair 
+1. Assign a different color to each gene 
+1. Assign a different shape to each replicate 
+1. Add a descriptive title to the plot 
+
+Extra credit: add error bars to the plot (use `geom_errorbar`).
+
 ```{r problem_3}
+library(ggplot2)
 ```
 
-## Problem 4
-
-```{r problem_4}
-```
-
-## Problem 5
-
-```{r problem_5}
-```
