@@ -95,8 +95,6 @@ Identify the top 3 most consistently differentially expressed genes between the 
 ```{r problem_2}
 ```
 
-There are `r nrows(final_data)` rows of data in the final `data.frame`.
-
 ## Problem 3
 
 Now examine the above final data frame above and write a few sentences putting inline code in least 3 places. For example, There are `r nrows(final_data)` rows of data in the final `data.frame`.
