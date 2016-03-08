@@ -1,6 +1,6 @@
 ---
 title: "Problem Set 3. Due Friday March 11 5pm"
-author: "Jay Hesselberth"
+author: "Student name"
 date: "March 7, 2016"
 output: html_document
 ---
@@ -8,6 +8,16 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, comment = "#>")
 ```
+
+# Submission
+
+1. Fork this repository to your own account
+1. Make changes to the `README.Rmd` file (including the author field above).
+1. Knit the file to HTML format
+1. Publish HTML on Rpubs (you will need to sign up for the free account) and *add the link below*.
+1. Submit a PR with your answers.
+
+*Link to Rpubs document:* XXX
 
 # Overview 
 
@@ -85,16 +95,19 @@ Identify the top 3 most consistently differentially expressed genes between the 
 ```{r problem_2}
 ```
 
+There are `r nrows(final_data)` rows of data in the final `data.frame`.
+
 ## Problem 3
 
 Plot the expression (`count`) by time (`hpi`) for the above genes. Format the plot as follows:
 
 1. Plot each point.
 1. Connect the points with a smooth line 
-1. Create a facet for each plant / bgh pair 
+1. Create a facet for each `plant` / `bgh` pair 
 1. Assign a different color to each gene 
 1. Assign a different shape to each replicate 
 1. Add a descriptive title to the plot 
+1. Use the "black & white" theme
 
 Extra credit: add error bars to the plot (use `geom_errorbar`).
 
