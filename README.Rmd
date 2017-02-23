@@ -1,7 +1,7 @@
 ---
-title: "Problem Set 3. Due Friday March 11 5pm"
+title: "Problem Set 3. Due Thurs March 2 5pm"
 author: "Student name"
-date: "March 7, 2016"
+date: "Feb 23, 2017"
 output: html_document
 ---
 
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo = TRUE, comment = "#>")
 
 # Overview 
 
-We will examine a [time-course of mRNA expression][1] of barley powdery mildew fungus in immunocompromised plants (*Arabidopsis*). The fungus Blumeria graminis f. sp. hordei (called *Bgh* from now on)
+You will examine a [time-course of mRNA expression][1] of barley powdery mildew fungus in immunocompromised plants (*Arabidopsis*). The fungus Blumeria graminis f. sp. hordei (called *Bgh* from now on)
 
 Counts were generated using the [`maSigPro` software][3] and deposited in [NCBI GEO][2].
 
@@ -45,10 +45,7 @@ We will download tables from GEO containing counts of mRNA abundance from both t
 First we need load the data.
 
 ```{r load_raw_data, message = FALSE}
-library(readr)
-library(tidyr)
-library(dplyr)
-library(stringr)
+library(tidyverse)
 
 # bgh data
 bgh_url <- 'http://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE43163&format=file&file=GSE43163_CompleteCountTable_Bgh.txt.gz'
@@ -59,32 +56,55 @@ raw_data <- read_tsv(bgh_url, skip = 2)
 # the header for the first column is "NA", set it manually
 names(raw_data)[1] <- 'gene.name'
 
-raw_data
+raw_data <- as_data_frame(raw_data)
 ```
 
 # Problems
 
 ## Problem 1
 
-Now that the raw data are loaded, your first task is to tidy the data with `tidyr`.
+Now that the raw data are loaded, your first task is to tidy the data with `tidyr`. The `cleaned_data` should look something like this:
+
+```
+# A tibble: 310,896 × 6
+             gene.name plant fungus time.point   rep value
+*                <chr> <chr>  <chr>      <chr> <chr> <int>
+1             bgh04079   B12     A6       6hpi     1    13
+2             bgh01634   B12     A6       6hpi     1    31
+3  bghG000012000001001   B12     A6       6hpi     1   121
+4  bghG000012000002001   B12     A6       6hpi     1     3
+5             bgh00757   B12     A6       6hpi     1   253
+6             bgh01273   B12     A6       6hpi     1    45
+7             bgh01274   B12     A6       6hpi     1    32
+8             bgh01277   B12     A6       6hpi     1     9
+9             bgh06140   B12     A6       6hpi     1    47
+10            bgh05774   B12     A6       6hpi     1    42
+# ... with 310,886 more rows
+```
 
 ```{r problem_1}
 # add tidying code here
-cleaned_data <- raw_data %>% tbl_df
 
 cleaned_data
 ```
 
 ## Problem 2
 
-Identify the top 3 most consistently differentially expressed genes between the earliest and latest time points for each combination of `plant` and `Bgh` strains.
+Identify the top 3 most consistently differentially expressed genes between the earliest and latest time points for each combination of `plant` and `fungus` strains.
 
-- Differential expression is the difference between `counts`
-- "Consistency" is the smallest variance in counts between replicates
+- "Differential expression"" is the difference between `value` (i.e., gene expression level) between time points.
+
+- "Consistency" is the smallest variance in `value` between replicates.
 
 ### Strategy
 
-1. Create a new table from the cleaned data by moving each `hpi` value to a new column name, with counts for each in the column (hint: use a `tidyr` verb).
+1. Create a new table from the cleaned data by moving each `hpi` value to a new column name, with counts for each in the column (hint: use a `tidyr` verb). It is helpful to reformat the `hpi` values by converting from e.g. `6hpi` to `hpi.6`. You can use `mutate` to do this, i.e.:
+
+```{r reformat_time}
+cleaned_data %>%
+  mutate(time.value = str_replace(time.point, 'hpi', ''),
+         time.hpi = str_c('hpi.', time.value))
+```
 
 2. Create a new column containing the expression difference between the relevant time points.
 
@@ -97,11 +117,11 @@ Identify the top 3 most consistently differentially expressed genes between the 
 
 ## Problem 3
 
-Now examine the above final data frame above and write a few sentences putting inline code in least 3 places. For example, There are `r nrows(final_data)` rows of data in the final `data.frame`.
+Now examine the above final data frame above and write a few sentences putting inline code in least 3 places. For example, There are `r nrow(cleaned_data)` rows of data in the cleaned data.
 
 ## Problem 4
 
-Plot the expression (`count`) by time (`hpi`) for the above genes. Format the plot as follows:
+Plot the expression (`value`) by time (`hpi`) for the above genes. Format the plot as follows:
 
 1. Plot each point.
 1. Connect the points with a smooth line 
@@ -114,10 +134,8 @@ Plot the expression (`count`) by time (`hpi`) for the above genes. Format the pl
 Extra credit: add error bars to the plot (use `geom_errorbar`).
 
 ```{r problem_4}
-library(ggplot2)
 ```
 
 ## Problem 5
 
 Post your knit HTML on rpubs.com and add the link to the block at the top of the document.
-
