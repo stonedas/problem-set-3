@@ -13,11 +13,8 @@ knitr::opts_chunk$set(echo = TRUE, comment = "#>")
 
 1. Fork this repository to your own account
 1. Make changes to the `README.Rmd` file (including the author field above).
-1. Knit the file to HTML format
-1. Publish HTML on Rpubs (you will need to sign up for the free account) and *add the link below*.
-1. Submit a PR with your answers.
-
-*Link to Rpubs document:* XXX
+1. Knit the file to HTML format and add it to your git repository (`git add`)
+1. Submit a pull request with your Rmd and knitted HTML files.
 
 # Overview 
 
@@ -61,6 +58,7 @@ raw_data <- as_data_frame(raw_data)
 
 # Problems
 
+
 ## Problem 1
 
 Now that the raw data are loaded, your first task is to tidy the data with `tidyr`. The `cleaned_data` should look something like this:
@@ -82,13 +80,40 @@ Now that the raw data are loaded, your first task is to tidy the data with `tidy
 # ... with 310,886 more rows
 ```
 
+The key steps are to `gather()` the data into key-value pairs and then `separate()` the information from the key column into new columns.
+
 ```{r problem_1}
 # add tidying code here
 
-cleaned_data
+# report the cleaned_data by just naming it, uncomment the following line:
+# cleaned_data
 ```
 
-## Problem 2
+## Problem 3
+
+You need to translate what you learned on the command line into the R world.
+
+Which plant has the highest expression of any gene in the 6hpi time point?
+
+```{bash, eval=FALSE}
+raw_data | awk '$4 == "6hpi"' | sort -k6nr | head -n 1 | cut -f2
+```
+
+```{r}
+# translate to dplyr code
+```
+
+Which plant / fungus pair has the highest expression in the 18hpi time point?
+
+```{bash, eval=FALSE}
+raw_data | awk '$4 == "18hpi"' | sort -k6nr | head -n 1 | cut -f2,3
+```
+
+```{r}
+# translate to dplyr code
+```
+
+## Problem 3
 
 Identify the top 3 most consistently differentially expressed genes between the earliest and latest time points for each combination of `plant` and `fungus` strains.
 
@@ -100,7 +125,7 @@ Identify the top 3 most consistently differentially expressed genes between the 
 
 1. Create a new table from the cleaned data by moving each `hpi` value to a new column name, with counts for each in the column (hint: use a `tidyr` verb). It is helpful to reformat the `hpi` values by converting from e.g. `6hpi` to `hpi.6`. You can use `mutate` to do this, i.e.:
 
-```{r reformat_time}
+```{r reformat_time, eval=FALSE}
 cleaned_data %>%
   mutate(time.value = str_replace(time.point, 'hpi', ''),
          time.hpi = str_c('hpi.', time.value))
@@ -112,14 +137,14 @@ cleaned_data %>%
 
 4. Sort by these statistics and use the `dplyr` verb `slice` to pull the ones you want (i.e., the top 3). Note you will have to remove `gene.name` from the grouping so that sorting works.
 
-```{r problem_2}
+```{r problem_3}
 ```
 
-## Problem 3
-
-Now examine the above final data frame above and write a few sentences putting inline code in least 3 places. For example, There are `r nrow(cleaned_data)` rows of data in the cleaned data.
-
 ## Problem 4
+
+Now examine the above final data frame above and write a few sentences putting inline code in least 3 places. For example, There are `r nrow(mtcars)` rows of data in `mtcars`.
+
+## Problem 5
 
 Plot the expression (`value`) by time (`hpi`) for the above genes. Format the plot as follows:
 
@@ -133,9 +158,5 @@ Plot the expression (`value`) by time (`hpi`) for the above genes. Format the pl
 
 Extra credit: add error bars to the plot (use `geom_errorbar`).
 
-```{r problem_4}
+```{r problem_5}
 ```
-
-## Problem 5
-
-Post your knit HTML on rpubs.com and add the link to the block at the top of the document.
