@@ -1,6 +1,6 @@
 ---
 title: "Problem Set 3. Due Thurs March 2 5pm"
-author: "Student name"
+author: "Sarah Stonedahl"
 date: "Feb 23, 2017"
 output: html_document
 ---
@@ -9,6 +9,9 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, comment = "#>")
 ```
 
+```{r}
+
+```
 # Submission
 
 1. Fork this repository to your own account
@@ -83,14 +86,14 @@ Now that the raw data are loaded, your first task is to tidy the data with `tidy
 The key steps are to `gather()` the data into key-value pairs and then `separate()` the information from the key column into new columns.
 
 ```{r problem_1}
-# add tidying code here
+raw_data %>% gather(key, value, -gene.name) %>% separate (key, into = c ('plant', 'fungus', 'time.point', 'rep'), sep = '_') -> cleaned_data
 
-# report the cleaned_data by just naming it, uncomment the following line:
-# cleaned_data
+ # report the cleaned_data by just naming it, uncomment the following line:
+cleaned_data
+
 ```
 
-## Problem 3
-
+## Problem 2
 You need to translate what you learned on the command line into the R world.
 
 Which plant has the highest expression of any gene in the 6hpi time point?
@@ -100,7 +103,10 @@ raw_data | awk '$4 == "6hpi"' | sort -k6nr | head -n 1 | cut -f2
 ```
 
 ```{r}
-# translate to dplyr code
+library(stringr)
+cleaned_data %>% mutate(time.point = str_replace(time.point, 'hpi', ''), time.point = str_c('hpi.', time.point)) %>% spread(time.point, value) -> cleaned_data_hpi
+
+arrange(cleaned_data_hpi, hpi.6) %>% tail() %>% slice(1) %>% select(plant, fungus)
 ```
 
 Which plant / fungus pair has the highest expression in the 18hpi time point?
@@ -110,7 +116,7 @@ raw_data | awk '$4 == "18hpi"' | sort -k6nr | head -n 1 | cut -f2,3
 ```
 
 ```{r}
-# translate to dplyr code
+arrange(cleaned_data_hpi, hpi.18) %>% tail() %>% slice(1) %>% select(plant, fungus)
 ```
 
 ## Problem 3
@@ -126,9 +132,7 @@ Identify the top 3 most consistently differentially expressed genes between the 
 1. Create a new table from the cleaned data by moving each `hpi` value to a new column name, with counts for each in the column (hint: use a `tidyr` verb). It is helpful to reformat the `hpi` values by converting from e.g. `6hpi` to `hpi.6`. You can use `mutate` to do this, i.e.:
 
 ```{r reformat_time, eval=FALSE}
-cleaned_data %>%
-  mutate(time.value = str_replace(time.point, 'hpi', ''),
-         time.hpi = str_c('hpi.', time.value))
+#I already did this to make the clean_data_hpi
 ```
 
 2. Create a new column containing the expression difference between the relevant time points.
@@ -138,11 +142,20 @@ cleaned_data %>%
 4. Sort by these statistics and use the `dplyr` verb `slice` to pull the ones you want (i.e., the top 3). Note you will have to remove `gene.name` from the grouping so that sorting works.
 
 ```{r problem_3}
+cleaned_data_hpi %>% mutate(expr.diff = hpi.24 - hpi.6) -> expr_data
+
+expr_data %>% group_by(gene.name, plant, fungus) %>% summarise(mean_expr = mean(expr.diff), var_exp = var(expr.diff)) %>% ungroup(gene.name) %>% arrange(mean_expr, var_exp) %>% group_by(plant, fungus) %>% tail %>% slice(1:3) 
+
+expr_data %>% group_by(gene.name, plant, fungus) %>% summarise(mean_expr = mean(expr.diff), var_exp = var(expr.diff)) %>% ungroup(gene.name) %>% arrange(mean_expr, var_exp) %>% group_by(plant, fungus) %>% tail %>% slice(1:3) -> con_diff_data
+
 ```
 
 ## Problem 4
 
 Now examine the above final data frame above and write a few sentences putting inline code in least 3 places. For example, There are `r nrow(mtcars)` rows of data in `mtcars`.
+
+There are `r nrow(con_diff_data)` rows and `r ncol(con_diff_data)` columns in `con_diff_data`. There are `r n_groups(con_diff_data)` combinations of plant and fungus in `con_diff_data`.
+
 
 ## Problem 5
 
