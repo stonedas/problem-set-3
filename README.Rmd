@@ -5,6 +5,7 @@ date: "Feb 23, 2017"
 output: html_document
 ---
 URL: http://rpubs.com/stonedas/256869
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, comment = "#>")
 ```
