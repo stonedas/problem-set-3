@@ -105,9 +105,7 @@ raw_data | awk '$4 == "6hpi"' | sort -k6nr | head -n 1 | cut -f2
 
 ```{r}
 library(stringr)
-cleaned_data %>% mutate(time.point = str_replace(time.point, 'hpi', ''), time.point = str_c('hpi.', time.point)) %>% spread(time.point, value) -> cleaned_data_hpi
-
-arrange(cleaned_data_hpi, hpi.6) %>% tail() %>% slice(1) %>% select(plant, fungus)
+cleaned_data %>% mutate(time.point = str_replace(time.point, 'hpi', ''), time.point = str_c('hpi.', time.point)) %>% filter(time.point == "hpi.6") %>% arrange(desc(value)) %>% slice(1:1) %>% select(plant)
 ```
 
 Which plant / fungus pair has the highest expression in the 18hpi time point?
@@ -117,7 +115,7 @@ raw_data | awk '$4 == "18hpi"' | sort -k6nr | head -n 1 | cut -f2,3
 ```
 
 ```{r}
-arrange(cleaned_data_hpi, hpi.18) %>% tail() %>% slice(1) %>% select(plant, fungus)
+cleaned_data %>% mutate(time.point = str_replace(time.point, 'hpi', ''), time.point = str_c('hpi.', time.point)) %>% filter(time.point == "hpi.18") %>% arrange(desc(value)) %>% slice(1:1) %>% select(plant)
 ```
 
 ## Problem 3
@@ -133,7 +131,7 @@ Identify the top 3 most consistently differentially expressed genes between the 
 1. Create a new table from the cleaned data by moving each `hpi` value to a new column name, with counts for each in the column (hint: use a `tidyr` verb). It is helpful to reformat the `hpi` values by converting from e.g. `6hpi` to `hpi.6`. You can use `mutate` to do this, i.e.:
 
 ```{r reformat_time, eval=FALSE}
-#I already did this to make the clean_data_hpi
+
 ```
 
 2. Create a new column containing the expression difference between the relevant time points.
@@ -143,11 +141,13 @@ Identify the top 3 most consistently differentially expressed genes between the 
 4. Sort by these statistics and use the `dplyr` verb `slice` to pull the ones you want (i.e., the top 3). Note you will have to remove `gene.name` from the grouping so that sorting works.
 
 ```{r problem_3}
+cleaned_data %>% mutate(time.point = str_replace(time.point, 'hpi', ''), time.point = str_c('hpi.', time.point)) %>% spread(time.point, value) -> cleaned_data_hpi
+
 cleaned_data_hpi %>% mutate(expr.diff = hpi.24 - hpi.6) -> expr_data
 
-expr_data %>% group_by(gene.name, plant, fungus) %>% summarise(mean_expr = mean(expr.diff), var_exp = var(expr.diff)) %>% ungroup(gene.name) %>% arrange(mean_expr, var_exp) %>% group_by(plant, fungus) %>% tail %>% slice(1:3) 
+expr_data %>% group_by(gene.name, plant, fungus) %>% summarise(mean_expr = mean(expr.diff), var_exp = var(expr.diff)) %>% ungroup(gene.name) %>% arrange(desc(mean_expr), var_exp) %>% group_by(plant, fungus) %>% slice(1:3)
 
-expr_data %>% group_by(gene.name, plant, fungus) %>% summarise(mean_expr = mean(expr.diff), var_exp = var(expr.diff)) %>% ungroup(gene.name) %>% arrange(mean_expr, var_exp) %>% group_by(plant, fungus) %>% tail %>% slice(1:3) -> con_diff_data
+expr_data %>% group_by(gene.name, plant, fungus) %>% summarise(mean_expr = mean(expr.diff), var_exp = var(expr.diff)) %>% ungroup(gene.name) %>% arrange(desc(mean_expr), var_exp) %>% group_by(plant, fungus) %>% slice(1:3) -> con_diff_data
 
 ```
 
@@ -173,4 +173,5 @@ Plot the expression (`value`) by time (`hpi`) for the above genes. Format the pl
 Extra credit: add error bars to the plot (use `geom_errorbar`).
 
 ```{r problem_5}
+semi_join(cleaned_data, con_diff_data, by = "gene.name") %>% ggplot(aes(time.point, value)) + geom_point()
 ```
