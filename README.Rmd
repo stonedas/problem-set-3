@@ -173,5 +173,7 @@ Plot the expression (`value`) by time (`hpi`) for the above genes. Format the pl
 Extra credit: add error bars to the plot (use `geom_errorbar`).
 
 ```{r problem_5}
-semi_join(cleaned_data, con_diff_data, by = "gene.name") %>% ggplot(aes(time.point, value)) + geom_point()
+semi_join(cleaned_data, con_diff_data, by = "gene.name") -> joined_data
+
+joined_data %>% ggplot(aes(x = time.point, y = value, color = gene.name)) + geom_point() + facet_wrap("plant") + geom_smooth(method = "lm", se = FALSE) + theme_bw() + labs(title = "Gene expression over time") 
 ```
